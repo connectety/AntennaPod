@@ -12,9 +12,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import de.danoeh.antennapod.core.R;
 import de.danoeh.antennapod.core.feed.Feed;
-import de.danoeh.antennapod.core.feed.FeedPreferences;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
-import de.danoeh.antennapod.core.storage.DBReader;
 import de.danoeh.antennapod.core.storage.PodDBAdapter;
 import de.danoeh.antennapod.core.util.gui.NotificationUtils;
 
@@ -22,27 +20,12 @@ public class NewEpisodesNotification {
     static final String GROUP_KEY = "de.danoeh.antennapod.EPISODES";
 
     private final int lastEpisodeCount;
-    private final boolean shouldShowNotification;
 
     public NewEpisodesNotification(Long feedId) {
-        Feed feed = DBReader.getFeed(feedId);
-
-        FeedPreferences prefs = feed.getPreferences();
-        if (!prefs.getKeepUpdated() || !prefs.getShowEpisodeNotification()) {
-            shouldShowNotification = false;
-            lastEpisodeCount = -1;
-            return;
-        }
-
         lastEpisodeCount = getNewEpisodeCount(feedId);
-        shouldShowNotification = true;
     }
 
     public void showIfNeeded(Context context, Feed feed) {
-        if (!shouldShowNotification) {
-            return;
-        }
-
         long feedId = feed.getId();
         int newEpisodes = getNewEpisodeCount(feedId) - lastEpisodeCount;
 

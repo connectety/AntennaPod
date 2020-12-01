@@ -116,6 +116,15 @@ public class DownloadRequester implements DownloadStateProvider {
     private DownloadRequest createRequest(FeedFile item, FeedFile container, File dest, boolean overwriteIfExists,
                                           String username, String password, String lastModified,
                                           boolean deleteOnFailure, Bundle arguments, boolean initiatedByUser) {
+        return createRequest(item, container, dest, overwriteIfExists,
+                username, password, lastModified,
+                deleteOnFailure, arguments, initiatedByUser, false);
+    }
+    @Nullable
+    private DownloadRequest createRequest(FeedFile item, FeedFile container, File dest, boolean overwriteIfExists,
+                                          String username, String password, String lastModified,
+                                          boolean deleteOnFailure, Bundle arguments, boolean initiatedByUser,
+                                          boolean showEpisodeNotifications) {
         final boolean partiallyDownloadedFileExists = item.getFile_url() != null && new File(item.getFile_url()).exists();
 
         Log.d(TAG, "partiallyDownloadedFileExists: " + partiallyDownloadedFileExists);
@@ -160,7 +169,8 @@ public class DownloadRequester implements DownloadStateProvider {
                 .withAuthentication(username, password)
                 .lastModified(lastModified)
                 .deleteOnFailure(deleteOnFailure)
-                .withArguments(arguments);
+                .withArguments(arguments)
+                .withShowNotification(showEpisodeNotifications);
         return builder.build();
     }
 
@@ -203,7 +213,8 @@ public class DownloadRequester implements DownloadStateProvider {
             args.putBoolean(REQUEST_ARG_LOAD_ALL_PAGES, loadAllPages);
 
             DownloadRequest request = createRequest(feed, null, new File(getFeedfilePath(), getFeedfileName(feed)),
-                    true, username, password, lastModified, true, args, initiatedByUser
+                    true, username, password, lastModified, true, args, initiatedByUser,
+                    feed.getPreferences().getShowEpisodeNotification()
             );
             if (request != null) {
                 download(context, request);

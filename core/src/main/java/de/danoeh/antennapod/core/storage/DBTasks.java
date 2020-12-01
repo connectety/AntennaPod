@@ -241,6 +241,9 @@ public final class DBTasks {
             f = new Feed(feed.getDownload_url(), lastUpdate, feed.getTitle(),
                     feed.getPreferences().getUsername(), feed.getPreferences().getPassword());
         }
+
+        f.getPreferences().setShowEpisodeNotification(feed.getPreferences().getShowEpisodeNotification());
+
         f.setId(feed.getId());
 
         if (f.isLocalFeed()) {
